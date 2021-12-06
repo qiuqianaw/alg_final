@@ -2,12 +2,17 @@
  * @Descripttion: algFinal
  * @version: 1.0
  * @Author: qiuqian 19001020502邱谦
- * @Date: 2021-12-01 09:45:19
  * @LastEditors: qiquian
- * @LastEditTime: 2021-12-06 22:20:07
  */
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
+
+/**
+ * 1. 分治法题目
+ *  (5) 循环赛日程安排。
+ *      问题描述:假设有 n=2^k 个选手参加循环赛， 请设计满足以下要求的比赛日程表:
+ *      每个选手都必须与其他 n-1 个选手 比赛一次;每个选手一天只能参赛一次。
+ */
 
 /**
  * 按分治策略，我们可以将所有的选手分为两半，则n个选手的比赛日程表可以通过n/2个选手的比赛日程表来决定。

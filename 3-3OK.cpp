@@ -15,8 +15,29 @@ using namespace std;
  *      若 A[ ]={3,4,3,1}，B[ ]={1,2,2,6}，结果为 2。
  */
 
+int arrange(vector<int> A, vector<int> B)
+{
+  sort(A.begin(), A.end());
+  sort(B.begin(), B.end());
+  int sum = 0;
+  int j = B.size() - 1;
+
+  // 双指针技巧
+  for (int i = A.size() - 1; i >= 0; i--)
+  {
+    if (A[i] <= B[j] && j >= 0)
+    {
+      sum++;
+      j--;
+    }
+  }
+  return sum;
+}
 
 int main()
 {
+  vector<int> A = {1, 2, 3};
+  vector<int> B = {3, 2, 4};
+  cout << arrange(A, B) << endl;
   return 0;
 }
