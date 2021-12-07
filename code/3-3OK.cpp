@@ -14,11 +14,54 @@ using namespace std;
  *      例如，A[ ]={1,2,3}，B[ ]={3,2,4}， 结果为 3;
  *      若 A[ ]={3,4,3,1}，B[ ]={1,2,2,6}，结果为 2。
  */
+vector<int> sortArray(vector<int> &nums);
+int partation(vector<int> &arr, int left, int right);
+void quickSort(vector<int> &arr, int left, int right);
+
+vector<int> sortArray(vector<int> &nums)
+{
+  quickSort(nums, 0, nums.size() - 1);
+  return nums;
+}
+int partation(vector<int> &arr, int left, int right)
+{
+  int random = left + rand() % (right - left + 1);
+  swap(arr[random], arr[left]);
+  int pivot = arr[left];
+  while (left < right)
+  {
+    while (left < right && arr[right] >= pivot)
+    {
+      right--;
+    }
+    arr[left] = arr[right];
+    while (left < right && arr[left] <= pivot)
+    {
+      left++;
+    }
+    arr[right] = arr[left];
+  }
+  arr[left] = pivot;
+  return left;
+}
+void quickSort(vector<int> &arr, int left, int right)
+{
+  if (arr.size() < 2 || left >= right)
+    return;
+  // 主要增加的细节处理在下面这部分的函数中
+  int p = partation(arr, left, right);
+  quickSort(arr, left, p - 1);
+  quickSort(arr, p + 1, right);
+}
 
 int arrange(vector<int> A, vector<int> B)
 {
-  sort(A.begin(), A.end());
-  sort(B.begin(), B.end());
+  // sort(A.begin(), A.end());
+  // sort(B.begin(), B.end());
+
+  A = sortArray(A);
+  B = sortArray(B);
+
   int sum = 0;
   int j = B.size() - 1;
 

@@ -40,6 +40,6 @@ int path(int m, int n)
 
 int main()
 {
-  path(2, 3);
+  path(3, 5);
   return 0;
 }

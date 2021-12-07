@@ -32,14 +32,15 @@ int getMinCoins(int n)
     n %= coins[i];
     result += current_coins_num;
   }
-  cout << result << endl;
+  // cout << result << endl;
   return result;
 }
 
 int main()
 {
   int W;
-  cin >> W;
+  // cin >> W;
+  W = 38;
   W *= 100;
   cout << getMinCoins(W) << endl;
   return 0;

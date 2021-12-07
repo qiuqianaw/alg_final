@@ -13,6 +13,46 @@ using namespace std;
  *      例如 a[ ]={1,1,2}，输出结果是(1,1,2)、(1,2,1)、(2,1,1)。
  */
 
+vector<int> sortArray(vector<int> &nums);
+int partation(vector<int> &arr, int left, int right);
+void quickSort(vector<int> &arr, int left, int right);
+
+vector<int> sortArray(vector<int> &nums)
+{
+  quickSort(nums, 0, nums.size() - 1);
+  return nums;
+}
+int partation(vector<int> &arr, int left, int right)
+{
+  int random = left + rand() % (right - left + 1);
+  swap(arr[random], arr[left]);
+  int pivot = arr[left];
+  while (left < right)
+  {
+    while (left < right && arr[right] >= pivot)
+    {
+      right--;
+    }
+    arr[left] = arr[right];
+    while (left < right && arr[left] <= pivot)
+    {
+      left++;
+    }
+    arr[right] = arr[left];
+  }
+  arr[left] = pivot;
+  return left;
+}
+void quickSort(vector<int> &arr, int left, int right)
+{
+  if (arr.size() < 2 || left >= right)
+    return;
+  // 主要增加的细节处理在下面这部分的函数中
+  int p = partation(arr, left, right);
+  quickSort(arr, left, p - 1);
+  quickSort(arr, p + 1, right);
+}
+
 vector<vector<int>> result;
 vector<int> path;
 
@@ -43,7 +83,8 @@ void backtrack(vector<int> nums, vector<bool> used)
 vector<vector<int>> permuteUnique(vector<int> &nums)
 {
   vector<bool> used(nums.size() + 1, false);
-  sort(nums.begin(), nums.end());
+  // sort(nums.begin(), nums.end());
+  nums = sortArray(nums);
   backtrack(nums, used);
   return result;
 }

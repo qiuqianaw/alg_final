@@ -68,7 +68,7 @@ void step2(int n)
 
 int main()
 {
-  int n = 20;
+  int n = 5;
   step(n);
   step2(n);
   return 0;

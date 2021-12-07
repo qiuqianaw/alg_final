@@ -64,7 +64,7 @@ int steps(int s, int e)
 int main()
 {
   int s, e;
-  cin >> s >> e;
+  // cin >> s >> e;
   cout << steps(4, 24) << endl;
   return 0;
 }
