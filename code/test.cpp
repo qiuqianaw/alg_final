@@ -1,76 +1,115 @@
-/*
- * @Descripttion: algFinal
- * @version: 1.0
- * @Author: qiuqian 19001020502邱谦
- * @Date: 2021-12-01 09:45:19
- * @LastEditors: qiquian
- * @LastEditTime: 2021-12-06 22:20:07
- */
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
+#define MAXN 21 //最多的集装箱数
 
-/**
- * 按分治策略，我们可以将所有的选手分为两半，则n个选手的比赛日程表可以通过n/2个选手的比赛日程表来决定。
- * 递归地用这种一分为二的策略对选手进行划分，直到只剩下两个选手时，比赛日程表的制定就变得很简单。
- * 这时只要让这两个选手进行比赛就可以了。
- * 如上图，所列出的正方形表是8个选手的比赛日程表。
- * 其中左上角与左下角的两小块分别为选手1至选手4和选手5至选手8前3天的比赛日程。
- * 据此，将左上角小块中的所有数字按其相对位置抄到右下角，
- * 又将左下角小块中的所有数字按其相对位置抄到右上角，
- * 这样我们就分别安排好了选手1至选手4和选手5至选手8在后4天的比赛日程。
- * 依此思想容易将这个比赛日程表推广到具有任意多个选手的情形。
- */
+//问题表示
+int n = 5;
+int W = 10;
+int w[] = {0, 5, 2, 6, 4, 3}; //集装箱重量,不计下标0的元素
 
-int a[100][100];
-int n; //选手的个数
+//求解结果表示
+int bestw = 0;           //存放最大重量,全局变量
+vector<int> bestx(MAXN); //存放最优解,全局变量
+int Count = 1;           //搜索空间中结点数累计,全局变量
 
-/*
-tox:目标数组的行号 
-toy:目标数组的列号 
-fromx:源数组的行号 
-fromy:源数组的列号 
-r:数组的大小为 r*r 
-*/
-
-void Copy(int tox, int toy, int fromx, int fromy, int r)
+struct NodeType
 {
-  for (int i = 0; i < r; i++)
+  int no;      //结点编号
+  int i;       //当前结点在解空间中的层次
+  int w;       //当前结点的总重量
+  int x[MAXN]; //当前结点包含的解向量
+  int ub;      //上界
+  bool operator<(const NodeType &t) const
   {
-    for (int j = 0; j < r; j++)
-    {
-      a[tox + i][toy + j] = a[fromx + i][fromy + j];
-    }
+    return (this->ub < t.ub) || (this->ub == t.ub && this->x[0] > t.x[0]); //ub越大越优先,当ub相同时x[0]越小越优先
   }
+};
+
+void bound(NodeType &e) //计算分枝结点e的上界
+{
+  int i = e.i + 1;
+  int r = 0; //r为剩余集装箱的重量
+  while (i <= n)
+  {
+    r += w[i];
+    i++;
+  }
+  e.ub = e.w + r;
 }
 
-void Table(int k)
+void bfs() //求装载问题的最优解
 {
-  n = 1 << k;
-  //构造正方形表格的第一行数据
-  for (int i = 0; i < n; i++)
-    a[0][i] = i + 1;
-  //采用分治算法，构造整个循环赛日程表
-  for (int r = 1; r < n; r <<= 1)
+  NodeType e, e1, e2;          //定义3个结点
+  priority_queue<NodeType> qu; //定义一个优先队列qu
+  e.no = Count++;              //设置结点编号
+  e.i = 0;                     //根结点置初值,其层次计为0
+  e.w = 0;
+  //初始化根结点的解向量
+  for (int j = 0; j <= n; j++)
   {
-    for (int i = 0; i < n; i += 2 * r)
+    e.x[j] = 0;
+  }
+  bound(e);           //求根结点的上界
+  qu.push(e);         //根结点进队
+  while (!qu.empty()) //队不空循环
+  {
+    e = qu.top();
+    qu.pop();     //出队结点e作为当前结点
+    if (e.i == n) //e是一个叶子结点
     {
-      Copy(r, r + i, 0, i, r); //左上角复制到右下角
-      Copy(r, i, 0, r + i, r); //右上角复制到左下角
+      if ((e.w > bestw) || (e.w == bestw && e.x[0] < bestx[0])) //比较找最优解
+      {
+        bestw = e.w; //更新bestw
+        for (int j = 0; j <= e.i; j++)
+        {
+          bestx[j] = e.x[j]; //复制解向量e.x->bestx
+        }
+      }
+    }
+    else //e不是叶子结点
+    {
+      if (e.w + w[e.i + 1] <= W) //检查左孩子结点
+      {
+        e1.no = Count++; //设置结点编号
+        e1.i = e.i + 1;  //建立左孩子结点
+        e1.w = e.w + w[e1.i];
+        for (int j = 0; j <= e.i; j++)
+        {
+          e1.x[j] = e.x[j]; //复制解向量e.x->e1.x
+        }
+        e1.x[e1.i] = 1; //选择集装箱i
+        e1.x[0]++;      //装入集装箱数增1
+        bound(e1);      //求左孩子结点的上界
+        qu.push(e1);    //左孩子结点进队
+      }
+      e2.no = Count++; //设置结点编号
+      e2.i = e.i + 1;  //建立右孩子结点
+      e2.w = e.w;
+      //复制解向量e.x->e2.x
+      for (int j = 0; j <= e.i; j++)
+      {
+        e2.x[j] = e.x[j];
+      }
+      e2.x[e2.i] = 0; //不选择集装箱i
+      bound(e2);      //求右孩子结点的上界
+      //若右孩子结点可行,则进队,否则被剪枝
+      if (e2.ub > bestw)
+      {
+        qu.push(e2);
+      }
     }
   }
 }
 
 int main()
 {
-  int k = 3;
-  Table(k);
-  for (int i = 0; i < n; i++)
+  bfs();
+  cout << "解向量：";
+  for (int i = 1; i <= n; i++)
   {
-    for (int j = 0; j < n; j++)
-    {
-      cout << a[i][j] << " ";
-    }
-    cout << endl;
+    cout << bestx[i] << " ";
   }
-  return 0;
+  cout << endl;
+  cout << "总价值：";
+  cout << bestw << endl;
 }
