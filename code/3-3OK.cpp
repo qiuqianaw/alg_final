@@ -18,6 +18,14 @@ vector<int> sortArray(vector<int> &nums);
 int partation(vector<int> &arr, int left, int right);
 void quickSort(vector<int> &arr, int left, int right);
 
+/**
+ * @brief 
+ * 快速排序：数组中随机选择基准点，遍历剩余数组，将所有比基准点小的元素放在其左边，所有比基准点大的元素放在其右边。
+ * 一次遍历后，该基准点就位于已经排序完成时它应该处于的位置。
+ * 循环这个操作，直到所有元素排序完成。
+ * @param nums 
+ * @return vector<int> 
+ */
 vector<int> sortArray(vector<int> &nums)
 {
   quickSort(nums, 0, nums.size() - 1);
