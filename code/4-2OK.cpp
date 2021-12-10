@@ -13,6 +13,7 @@ using namespace std;
  *      例如 a[ ]={1,1,2}，输出结果是(1,1,2)、(1,2,1)、(2,1,1)。
  */
 
+//19001020502邱谦
 vector<int> sortArray(vector<int> &nums);
 int partation(vector<int> &arr, int left, int right);
 void quickSort(vector<int> &arr, int left, int right);
@@ -61,6 +62,8 @@ void quickSort(vector<int> &arr, int left, int right)
   quickSort(arr, p + 1, right);
 }
 
+// 19001020502邱谦
+// 按照回溯框架
 vector<vector<int>> result;
 vector<int> path;
 
